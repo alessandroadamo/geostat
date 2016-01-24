@@ -12,8 +12,8 @@ trait Model {
    * @return the computed variogram 
    * 
    * */
-  def variogram(h: Double): Double
-  def covariogram(h: Double): Double
+  def variogram(h: Float): Float
+  def covariogram(h: Float): Float
   
 
 }
