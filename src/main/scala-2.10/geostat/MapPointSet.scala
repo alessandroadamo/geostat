@@ -2,16 +2,12 @@ package geostat
 
 import scala.collection.mutable.TreeSet
 import scala.math._
-import org.apache.mahout.math._
-import scalabindings._
-import RLikeOps._
-import scala.math._
 
 /**
  * MapPointSet
  */
 class MapPointSet extends TreeSet[MapPoint] {
-  
+
   def this(points: Set[MapPoint]) {
 
     this()
@@ -21,39 +17,58 @@ class MapPointSet extends TreeSet[MapPoint] {
 
   /**
    * Get the set of points that away from the point less than radius
-   * 
+   *
    * @param center center of the search
    * @param radius radius search
-   * @return set of points 
-   * */
-  def radiusQuery(center: MapPoint, radius: Float): Set[MapPoint] = {
+   * @return set of points
+   */
+  def radiusQuery(center: MapPoint, radius: Double): Set[MapPoint] = {
 
-    val ptfrom = center.destination(radius, (5.0f * Pi.toFloat / 4.0f))
-    val ptto = center.destination(radius, (Pi.toFloat / 4.0f))
+    val ptfrom = center.destination(radius, (5.0 * Pi / 4.0))
+    val ptto = center.destination(radius, Pi / 4.0)
 
-    range(ptfrom, ptto).filter { x => center.greatCircleDistance(x) < radius }.toSet
+    range(ptfrom, ptto).filter { x => center.greatCircleDistance(x) <= radius }.toSet
 
   }
+
+  /**
+   * Get the set of points that away from the point less than radiusE and greater than radiusI
+   *
+   * @param center center of the search
+   * @param radiusI internal radius search
+   * @param radiusE external radius search
+   * @return set of points
+   */
+  def radiusQuery(center: MapPoint, radiusI: Double, radiusE: Double): Set[MapPoint] = {
+
+    require(radiusE >= radiusI)
+
+    val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0))
+    val ptto = center.destination(radiusE, Pi / 4.0)
+
+    range(ptfrom, ptto).map { x => (center.greatCircleDistance(x), x) }
+      .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE) }
+      .map { x => x._2 }
+      .toSet
   
+  }
+
   /**
    * This method finds a simple average latitude and longitude for the locations
-   * 
-   * */
-  def average () : MapPoint = {
-    
-    var zero : Vector = (0.0f, 0.0f, 0.0f)
-    //var avg_val = 0.0f
- 
-    /*
-    for (x <- this) {
-      avg += x.geodetic2cart()
-      avg_val += x.value
-    }
-    */
-    val avg : Vector = foldLeft(zero)(_ + _.geodetic2cart()) / size
-    val avg_val = foldLeft(0.0f)(_ + _.value) / size
-    new MapPoint(avg, avg_val)
-  
+   *
+   */
+  def average(): Option[MapPoint] = {
+
+    if (size == 0) return None
+
+    val avg = map(x => x.geodetic2cart).
+      foldLeft((0.0, 0.0, 0.0, 0.0))((acc, x) =>
+        (acc._1 + x._1, acc._2 + x._2, acc._3 + x._3, acc._4 + x._4))
+
+    Some(new MapPoint((avg._1 / size, avg._2 / size, avg._3 / size, avg._4 / size)))
+
   }
 
+ // override def toString() = map { x => x.toString }.reduceLeft(_ + _)
+  
 }

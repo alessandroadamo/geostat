@@ -1,8 +1,8 @@
 package geostat
 
-import org.apache.mahout.math._
-import scalabindings._
-import RLikeOps._
+//import org.apache.mahout.math._
+//import scalabindings._
+//import RLikeOps._
 import scala.math._
 
 object MapPoint extends WGS84 {
@@ -19,35 +19,32 @@ object MapPoint extends WGS84 {
    * @param longitude longitude
    * @return the 3D Cartesian coordinate
    */
-  def geodetic2cart(latitude: Float, longitude: Float): Vector = {
+  def geodetic2cart(pt : MapPoint): (Double, Double, Double, Double) = {
 
-    require(latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE)
-    require(longitude >= MIN_LONGITUDE && longitude <= MAX_LONGITUDE)
-
-    val lat = latitude.toRadians
-    val lon = longitude.toRadians
+    val lat = pt.latitude
+    val lon = pt.longitude
 
     val slat = sin(lat)
     val clat = cos(lat)
     val slong = sin(lon)
     val clong = cos(lon)
 
-    (R * clat * clong, R * clat * slong, R * slat)
+    (R * clat * clong, R * clat * slong, R * slat, pt.value)
 
   }
 
-  /**
+   /**
    * Convert 3D Cartesian coordinate to latitude/longitude coordinate
    *
    * @param latitude latitude
    * @param longitude longitude
    * @return the 3D Cartesian coordinate
    */
-  def cart2geodetic(cart: Vector) = new MapPoint(asin(cart(2) / R).toDegrees.toFloat, atan2(cart(1), cart(0)).toDegrees.toFloat)
+  def cart2geodetic(cart: (Double, Double, Double, Double)) = new MapPoint(asin(cart._3 / R).toDegrees.toFloat, atan2(cart._2, cart._1).toDegrees, cart._4)
 
-  private def latidure2int(latitude: Float) = floor((latitude - MapPoint.MIN_LATITUDE) * 1e6f).toInt
+  private def latitude2int(latitude: Double) = floor((latitude - MapPoint.MIN_LATITUDE) * 1e6f).toInt
 
-  private def longitude2int(longitude: Float) = floor((longitude - MapPoint.MIN_LONGITUDE) * 1e6f).toInt
+  private def longitude2int(longitude: Double) = floor((longitude - MapPoint.MIN_LONGITUDE) * 1e6f).toInt
 
   private def zorder(a: Int, b: Int): Long = {
 
@@ -78,31 +75,28 @@ object MapPoint extends WGS84 {
  *
  * @param latitude latitude
  * @param longitude longitude
- * @param value value object
- * @param weight weight value
+ * @param value value
  */
 @SerialVersionUID(123L)
-class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0f)
+class MapPoint(val latitude: Double, val longitude: Double, var value: Double = Double.NaN)
     extends WGS84 with Serializable with Ordered[MapPoint] {
 
   import MapPoint._
-
+  
   require(latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE)
   require(longitude >= MIN_LONGITUDE && longitude <= MAX_LONGITUDE)
 
-  val key: Long = zorder(latidure2int(latitude), longitude2int(longitude)) // Z-order key
+  val key: Long = zorder(latitude2int(latitude), longitude2int(longitude)) // Z-order key
+
+  private def hav(theta: Double) = { val h = sin(0.5 * theta); h * h }
 
   /**
-   * Create a new MapPoint from a 3D Cartesian point
-   *
-   * @param cart 3D Cartesian point
-   * @param value value
-   */
-  def this(cart: Vector, value: Float) = this(asin(cart(2) / MapPoint.R).toDegrees.toFloat,
-    atan2(cart(1), cart(0)).toDegrees.toFloat, value)
-
-  private def hav(theta: Float) = { val h = sin(0.5 * theta); h * h }
-
+   * MapPoint constructor from a tuple
+   * 
+   * @param cart 3D Cartesian coordinate and value tuple 
+   * */
+  def this (cart : (Double, Double, Double, Double)) = this(asin(cart._3 / 6371008.77141).toDegrees, atan2(cart._2, cart._1).toDegrees, cart._4);
+  
   /**
    * Haversine distance
    *
@@ -148,7 +142,7 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
    * @param distance
    * @param bearing
    */
-  def destination(distance: Float, bearing: Float): MapPoint = {
+  def destination(distance: Double, bearing: Double): MapPoint = {
 
     val lat1 = latitude.toRadians
     val lon1 = longitude.toRadians
@@ -156,7 +150,7 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
     val lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * sin(distance / R) * cos(bearing))
     val lon2 = lon1 + atan2(sin(bearing) * sin(distance / R) * cos(lat1), cos(distance / R) - sin(lat1) * sin(lat2))
 
-    return new MapPoint(lat2.toDegrees.toFloat, lon2.toDegrees.toFloat)
+    return new MapPoint(lat2.toDegrees, lon2.toDegrees)
 
   }
 
@@ -179,6 +173,7 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
 
     val y = sin(dlon) * cos(lat2)
     val x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)
+    
     atan2(y, x).toDegrees
 
   }
@@ -188,9 +183,9 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
    *
    * @param latitude latitude
    * @param longitude longitude
-   * @return the 3D Cartesian coordinate
+   * @return the 3D Cartesian coordinate and value
    */
-  def geodetic2cart(): Vector = {
+  def geodetic2cart(): (Double, Double, Double, Double) = {
 
     val lat = latitude.toRadians
     val lon = longitude.toRadians
@@ -200,12 +195,12 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
     val slong = sin(lon)
     val clong = cos(lon)
 
-    (R * clat * clong, R * clat * slong, R * slat)
+    (R * clat * clong, R * clat * slong, R * slat, value)
 
   }
 
   /**
-   * Caculate the half-way point along a great circle path between the two points
+   * Calculate the half-way point along a great circle path between the two points
    *
    * @param pt point
    * @return midpoint
@@ -226,13 +221,13 @@ class MapPoint(val latitude: Float, val longitude: Float, var value: Float = 0.0
     var lon3 = lon1 + atan2(By, cos(lat1) + Bx)
     lon3  = ((lon3 + 3.0f * Pi) % (2.0f * Pi) - Pi) // normalise to -180..+180°
     
-    new MapPoint(lat3.toDegrees, lon3.toFloat.toDegrees, 0.5f * ( this.value + pt.value ))
+    new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * ( this.value + pt.value))
 
   }
 
   def compare(that: MapPoint) = this.key.compare(that.key)
 
-  //  override def toString() = "key: " + key + " ( " + latitude + ", " + longitude + " )\n"
+  // override def toString() = " ( " + latitude + ", " + longitude + " ] = " + value
   override def toString() = latitude + ", " + longitude
 
 }
