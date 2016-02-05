@@ -139,16 +139,17 @@ class MapPoint(val latitude: Double, val longitude: Double, var value: Double = 
   /**
    * Given a start point and a distance d along a constant bearing, this will calculate the destination point.
    *
-   * @param distance
-   * @param bearing
+   * @param distance distance expressed in meters
+   * @param bearing bearing expressed in degrees
    */
   def destination(distance: Double, bearing: Double): MapPoint = {
 
     val lat1 = latitude.toRadians
     val lon1 = longitude.toRadians
+    val brng = bearing.toRadians
 
-    val lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * sin(distance / R) * cos(bearing))
-    val lon2 = lon1 + atan2(sin(bearing) * sin(distance / R) * cos(lat1), cos(distance / R) - sin(lat1) * sin(lat2))
+    val lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * sin(distance / R) * cos(brng))
+    val lon2 = lon1 + atan2(sin(brng) * sin(distance / R) * cos(lat1), cos(distance / R) - sin(lat1) * sin(lat2))
 
     return new MapPoint(lat2.toDegrees, lon2.toDegrees)
 

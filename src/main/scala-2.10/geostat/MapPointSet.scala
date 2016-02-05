@@ -24,8 +24,8 @@ class MapPointSet extends TreeSet[MapPoint] {
    */
   def radiusQuery(center: MapPoint, radius: Double): Set[MapPoint] = {
 
-    val ptfrom = center.destination(radius, (5.0 * Pi / 4.0))
-    val ptto = center.destination(radius, Pi / 4.0)
+    val ptfrom = center.destination(radius, 225.0)
+    val ptto = center.destination(radius, 45.0)
 
     range(ptfrom, ptto).filter { x => center.greatCircleDistance(x) <= radius }.toSet
 
@@ -55,7 +55,8 @@ class MapPointSet extends TreeSet[MapPoint] {
 
   /**
    * This method finds a simple average latitude and longitude for the locations
-   *
+   * 
+   * @return average of the map points set
    */
   def average(): Option[MapPoint] = {
 
@@ -69,6 +70,6 @@ class MapPointSet extends TreeSet[MapPoint] {
 
   }
 
- // override def toString() = map { x => x.toString }.reduceLeft(_ + _)
+  // override def toString() = map { x => x.toString }.reduceLeft(_ + _)
   
 }
