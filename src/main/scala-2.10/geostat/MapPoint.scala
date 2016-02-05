@@ -78,7 +78,7 @@ object MapPoint extends WGS84 {
  * @param value value
  */
 @SerialVersionUID(123L)
-class MapPoint(val latitude: Double, val longitude: Double, var value: Double = Double.NaN)
+class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var value: Double = Double.NaN)
     extends WGS84 with Serializable with Ordered[MapPoint] {
 
   import MapPoint._
@@ -226,7 +226,7 @@ class MapPoint(val latitude: Double, val longitude: Double, var value: Double = 
 
   }
 
-  def compare(that: MapPoint) = this.key.compare(that.key)
+  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key)  // less than 0.5m
 
   // override def toString() = " ( " + latitude + ", " + longitude + " ] = " + value
   override def toString() = latitude + ", " + longitude

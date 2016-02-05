@@ -70,6 +70,6 @@ class MapPointSet extends TreeSet[MapPoint] {
 
   }
 
-  // override def toString() = map { x => x.toString }.reduceLeft(_ + _)
+  //override def toString() = map { x => x.toString }.reduceLeft(_ + _)
   
 }
