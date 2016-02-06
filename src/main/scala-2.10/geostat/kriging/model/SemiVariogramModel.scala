@@ -1,19 +1,16 @@
 package geostat.kriging.model
 
 /**
- * Model trait
+ * SemiVariogram Model trait
  * */
-trait Model {
+trait SemiVariogramModel {
 
   /**
-   * Compute variogram 
+   * Compute the Variogram 
    * 
    * @param distance
    * @return the computed variogram 
-   * 
    * */
-  def variogram(h: Float): Float
-  def covariogram(h: Float): Float
-  
+  def variogram(h: Double): Double
 
 }
