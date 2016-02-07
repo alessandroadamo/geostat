@@ -6,7 +6,7 @@ package geostat.kriging.model
  * @param c sill
  * @param a range
  */
-class SphericalModel(c: Double, a: Double) extends SemiVariogramModel {
+class SphericalModel(val c: Double, a: Double) extends SemiVariogramModel {
 
   import scala.math._
 
@@ -14,9 +14,10 @@ class SphericalModel(c: Double, a: Double) extends SemiVariogramModel {
   require(a > 1e-8)
 
   def variogram(h: Double): Double = {
+    require(h>=0.0)
     val r = h / a
-    if (h <= a) ((3.0 / 2.0) * r - 0.5 * pow(r, 3.0))
+    if (h <= a) c * ((3.0 / 2.0) * r - 0.5 * pow(r, 3.0))
     else c
   }
-
+  
 }

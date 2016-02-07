@@ -6,7 +6,7 @@ package geostat.kriging.model
  * @param c sill
  * @param a range
  */
-class SineHoleEffectModel(c: Double, a: Double) extends SemiVariogramModel {
+class SineHoleEffectModel(val c: Double, a: Double) extends SemiVariogramModel {
 
   import scala.math._
 
@@ -14,6 +14,7 @@ class SineHoleEffectModel(c: Double, a: Double) extends SemiVariogramModel {
   require(a > 1e-8)
 
   def variogram(h: Double): Double = {
+    require(h>=0.0)
     val r = Pi * h / a
     c * (1.0 - sin(r) / r)
   }
