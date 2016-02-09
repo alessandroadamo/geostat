@@ -11,7 +11,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
-    /*   val center = new MapPoint(45.635477, 8.798650)
+    val center = new MapPoint(45.635477, 8.798650)
     var points = Set[MapPoint]()
 
     for (i <- 1 to 100000) {
@@ -20,16 +20,15 @@ object Main {
     }
 
     var tree = new MapPointSet(points)
-
     
-    println(center)
-    println(tree.average)
-*/
-    // val tr = tree.radiusQuery(center, 100.0, 200.0)
+    //println(center)
+    //println(tree.average)
 
-    // for (t  <-  tree) println(t)
+    val tr = tree.radiusQuery(center, 250.0, 1000.0, 90.0, 10.0)
 
-    // for (t  <-  tr) println(t)
+    //for (t  <-  tree) println(t)
+
+     for (t  <-  tr) println(t)
 
     // println(tree.average())
 
@@ -62,7 +61,8 @@ object Main {
     
     for (v <- grid.vertex)  println(v)
     */
-    val c = 4.0
+ 
+/*   val c = 4.0
     val a = 0.4
     val cub = new CubicModel(c, a)
     val exp = new ExponentialModel(c, a)
@@ -96,7 +96,7 @@ object Main {
 
     }
     bw.close()
-
+*/    
   }
 
 }

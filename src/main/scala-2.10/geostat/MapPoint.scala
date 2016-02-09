@@ -148,9 +148,9 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     val lon1 = longitude.toRadians
     val brng = bearing.toRadians
 
-    val lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * sin(distance / R) * cos(brng))
-    val lon2 = lon1 + atan2(sin(brng) * sin(distance / R) * cos(lat1), cos(distance / R) - sin(lat1) * sin(lat2))
-
+    val lat2 = asin(sin(lat1)*cos(distance/R) + cos(lat1)*math.sin(distance/R)*cos(brng))
+    val lon2 = lon1 + atan2(sin(brng)*sin(distance/R)*cos(lat1), 
+        cos(distance/R)- sin(lat1)*sin(lat2))
     return new MapPoint(lat2.toDegrees, lon2.toDegrees)
 
   }

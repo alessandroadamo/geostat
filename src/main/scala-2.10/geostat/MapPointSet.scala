@@ -43,8 +43,8 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     require(radiusE >= radiusI)
 
-    val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0))
-    val ptto = center.destination(radiusE, Pi / 4.0)
+    val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0).toDegrees)
+    val ptto = center.destination(radiusE, (Pi / 4.0).toDegrees)
 
     range(ptfrom, ptto).map { x => (center.greatCircleDistance(x), x) }
       .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE) }
@@ -52,7 +52,32 @@ class MapPointSet extends TreeSet[MapPoint] {
       .toSet
   
   }
+  
+  /**
+   * Get the set of points that away from the point less than radiusE and greater than radiusI
+   *
+   * @param center center of the search
+   * @param radiusI internal radius search
+   * @param radiusE external radius search
+   * @param direction angular direction expressed in degrees
+   * @param atol angular tolerance expressed in degrees
+   * @return set of points
+   */
+  def radiusQuery(center: MapPoint, radiusI: Double, radiusE: Double, direction: Double, atol: Double): Set[MapPoint] = {
 
+    require(radiusE >= radiusI)
+
+    val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0).toDegrees)
+    val ptto = center.destination(radiusE, (Pi / 4.0).toDegrees)
+
+    range(ptfrom, ptto).map { x => (center.greatCircleDistance(x), x) }
+      .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE)}
+      .filter{x => (center.bearing(x._2)<=direction+atol) && (center.bearing(x._2)>=direction-atol)}
+      .map { x => x._2 }
+      .toSet
+  
+  }
+ 
   /**
    * This method finds a simple average latitude and longitude for the locations
    * 
