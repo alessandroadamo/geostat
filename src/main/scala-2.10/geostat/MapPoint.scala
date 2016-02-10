@@ -19,7 +19,7 @@ object MapPoint extends WGS84 {
    * @param longitude longitude
    * @return the 3D Cartesian coordinate
    */
-  def geodetic2cart(pt : MapPoint): (Double, Double, Double, Double) = {
+  def geodetic2cart(pt: MapPoint): (Double, Double, Double, Double) = {
 
     val lat = pt.latitude
     val lon = pt.longitude
@@ -33,7 +33,7 @@ object MapPoint extends WGS84 {
 
   }
 
-   /**
+  /**
    * Convert 3D Cartesian coordinate to latitude/longitude coordinate
    *
    * @param latitude latitude
@@ -82,7 +82,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     extends WGS84 with Serializable with Ordered[MapPoint] {
 
   import MapPoint._
-  
+
   require(latitude >= MIN_LATITUDE && latitude <= MAX_LATITUDE)
   require(longitude >= MIN_LONGITUDE && longitude <= MAX_LONGITUDE)
 
@@ -92,11 +92,11 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
 
   /**
    * MapPoint constructor from a tuple
-   * 
-   * @param cart 3D Cartesian coordinate and value tuple 
-   * */
-  def this (cart : (Double, Double, Double, Double)) = this(asin(cart._3 / 6371008.77141).toDegrees, atan2(cart._2, cart._1).toDegrees, cart._4);
-  
+   *
+   * @param cart 3D Cartesian coordinate and value tuple
+   */
+  def this(cart: (Double, Double, Double, Double)) = this(asin(cart._3 / 6371008.77141).toDegrees, atan2(cart._2, cart._1).toDegrees, cart._4);
+
   /**
    * Haversine distance
    *
@@ -148,9 +148,9 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     val lon1 = longitude.toRadians
     val brng = bearing.toRadians
 
-    val lat2 = asin(sin(lat1)*cos(distance/R) + cos(lat1)*math.sin(distance/R)*cos(brng))
-    val lon2 = lon1 + atan2(sin(brng)*sin(distance/R)*cos(lat1), 
-        cos(distance/R)- sin(lat1)*sin(lat2))
+    val lat2 = asin(sin(lat1) * cos(distance / R) + cos(lat1) * math.sin(distance / R) * cos(brng))
+    val lon2 = lon1 + atan2(sin(brng) * sin(distance / R) * cos(lat1),
+      cos(distance / R) - sin(lat1) * sin(lat2))
     return new MapPoint(lat2.toDegrees, lon2.toDegrees)
 
   }
@@ -174,8 +174,9 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
 
     val y = sin(dlon) * cos(lat2)
     val x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)
-    
-    atan2(y, x).toDegrees
+
+    val ang = atan2(y, x).toDegrees
+    if (ang < 0.0) 360.0 + ang else ang
 
   }
 
@@ -218,17 +219,41 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     val Bx = cos(lat2) * cos(dlon)
     val By = cos(lat2) * sin(dlon)
 
-    val lat3  = atan2(sin(lat1) + sin(lat2), sqrt((cos(lat1) + Bx) * (cos(lat1) + Bx) + By * By)).toFloat
+    val lat3 = atan2(sin(lat1) + sin(lat2), sqrt((cos(lat1) + Bx) * (cos(lat1) + Bx) + By * By)).toFloat
     var lon3 = lon1 + atan2(By, cos(lat1) + Bx)
-    lon3  = ((lon3 + 3.0f * Pi) % (2.0f * Pi) - Pi) // normalise to -180..+180°
-    
-    new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * ( this.value + pt.value))
+    lon3 = ((lon3 + 3.0f * Pi) % (2.0f * Pi) - Pi) // normalise to -180..+180°
+
+    new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * (this.value + pt.value))
 
   }
 
-  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key)  // less than 0.5m
+  /**
+   * Cross Track Distance compute the distance from the point pt and the segment passing throw
+   * this point and the ptdest point
+   *
+   * @param ptdest destination point
+   * @param pt third point
+   * @return cross track distance
+   */
+  def crossTrackDistence(ptdest: MapPoint, pt: MapPoint) =
+    asin(sin(greatCircleDistance(pt) * sin(bearing(pt) - bearing(ptdest))))
 
-  // override def toString() = " ( " + latitude + ", " + longitude + " ] = " + value
+  /**
+   * Along Track Distances is the distance from the start point (this) to the closest 
+   * point on the path to a third point pt, following a great circle path defined by this point and ptdest.
+   * 
+   * @param ptdest destination point
+   * @param pt third point
+   * @return along track distance
+   */
+  def alongTrackDistance(ptdest: MapPoint, pt: MapPoint) = {
+    val distAD = greatCircleDistance(pt)
+    val xtd = asin(sin(greatCircleDistance(pt) * sin(bearing(pt) - bearing(ptdest))))
+    acos(cos(distAD) / cos(xtd))
+  }
+
+  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key) // less than 0.5m
+
   override def toString() = latitude + ", " + longitude
 
 }

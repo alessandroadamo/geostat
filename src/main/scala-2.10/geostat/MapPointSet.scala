@@ -50,9 +50,9 @@ class MapPointSet extends TreeSet[MapPoint] {
       .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE) }
       .map { x => x._2 }
       .toSet
-  
+
   }
-  
+
   /**
    * Get the set of points that away from the point less than radiusE and greater than radiusI
    *
@@ -66,21 +66,30 @@ class MapPointSet extends TreeSet[MapPoint] {
   def radiusQuery(center: MapPoint, radiusI: Double, radiusE: Double, direction: Double, atol: Double): Set[MapPoint] = {
 
     require(radiusE >= radiusI)
+    require(direction >= 0.0 && direction <= 360.0)
+    require(atol <= 180.0)
 
     val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0).toDegrees)
     val ptto = center.destination(radiusE, (Pi / 4.0).toDegrees)
 
+    val minAng = if (direction - atol < 0.0) direction - atol + 360.0 else direction - atol
+    val maxAng = if (direction + atol > 360.0) direction + atol - 360.0 else direction + atol
+
     range(ptfrom, ptto).map { x => (center.greatCircleDistance(x), x) }
-      .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE)}
-      .filter{x => (center.bearing(x._2)<=direction+atol) && (center.bearing(x._2)>=direction-atol)}
+      .filter { x => (x._1 >= radiusI) && (x._1 <= radiusE) }
+      .map { x => (x._1, x._2, center.bearing(x._2)) }
+      .filter { x =>
+        if (minAng > maxAng) !((x._3 > maxAng) && (x._3 < minAng))
+        else (x._3 <= maxAng) && (x._3 >= minAng)
+      }
       .map { x => x._2 }
       .toSet
-  
+
   }
- 
+
   /**
    * This method finds a simple average latitude and longitude for the locations
-   * 
+   *
    * @return average of the map points set
    */
   def average(): Option[MapPoint] = {
@@ -95,6 +104,4 @@ class MapPointSet extends TreeSet[MapPoint] {
 
   }
 
-  //override def toString() = map { x => x.toString }.reduceLeft(_ + _)
-  
 }

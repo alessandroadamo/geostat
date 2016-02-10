@@ -14,9 +14,9 @@ object Main {
     val center = new MapPoint(45.635477, 8.798650)
     var points = Set[MapPoint]()
 
-    for (i <- 1 to 100000) {
-      points += new MapPoint(45.635477 + (2.0 * Random.nextDouble() - 1.0) / 100.0,
-        8.798650 + (2.0f * Random.nextDouble() - 1.0) / 100.0)
+    for (i <- 1 to 2000) {
+      points += new MapPoint(45.635477 + (2.0 * Random.nextDouble() - 1.0) / 500.0,
+        8.798650 + (2.0f * Random.nextDouble() - 1.0) / 500.0)
     }
 
     var tree = new MapPointSet(points)
@@ -24,11 +24,11 @@ object Main {
     //println(center)
     //println(tree.average)
 
-    val tr = tree.radiusQuery(center, 250.0, 1000.0, 90.0, 10.0)
+    val tr = tree.radiusQuery(center, 0.0, 150.0, 180.0, 45.0)
 
     //for (t  <-  tree) println(t)
 
-     for (t  <-  tr) println(t)
+    for (t  <-  tr) println(t)
 
     // println(tree.average())
 
