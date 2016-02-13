@@ -6,6 +6,7 @@ import geostat.kriging.model._
 import java.io.File
 import java.io.BufferedWriter
 import java.io.FileWriter
+import geostat.kde.KernelDensity
 
 object Main {
 
@@ -22,13 +23,18 @@ object Main {
     var tree = new MapPointSet(points)
     
     //println(center)
-    //println(tree.average)
 
-    val tr = tree.radiusQuery(center, 0.0, 150.0, 180.0, 45.0)
-
-    //for (t  <-  tree) println(t)
+    val tr : MapPointSet = new MapPointSet(tree.radiusQuery(center, 0.0, 150.0))
 
     for (t  <-  tr) println(t)
+
+    println(tr.mean)
+    println(tr.stddev)
+    
+    println(KernelDensity.silvermanRule(tr))
+    
+    
+    //for (t  <-  tr) println(t)
 
     // println(tree.average())
 

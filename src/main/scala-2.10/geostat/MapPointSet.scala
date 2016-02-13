@@ -59,15 +59,15 @@ class MapPointSet extends TreeSet[MapPoint] {
    * @param center center of the search
    * @param radiusI internal radius search
    * @param radiusE external radius search
-   * @param direction angular direction expressed in degrees
-   * @param atol angular tolerance expressed in degrees
+   * @param direction angular direction expressed in degrees. Must be greater than 0.0 and less than 360.0 degrees.
+   * @param atol angular tolerance expressed in degrees. Must be greater than 0.0 and less than 180.0 degrees.
    * @return set of points
    */
   def radiusQuery(center: MapPoint, radiusI: Double, radiusE: Double, direction: Double, atol: Double): Set[MapPoint] = {
 
     require(radiusE >= radiusI)
     require(direction >= 0.0 && direction <= 360.0)
-    require(atol <= 180.0)
+    require(atol >= 0.0 && atol <= 180.0)
 
     val ptfrom = center.destination(radiusE, (5.0 * Pi / 4.0).toDegrees)
     val ptto = center.destination(radiusE, (Pi / 4.0).toDegrees)
@@ -88,11 +88,11 @@ class MapPointSet extends TreeSet[MapPoint] {
   }
 
   /**
-   * This method finds a simple average latitude and longitude for the locations
+   * Finds the mean latitude and longitude for the locations
    *
-   * @return average of the map points set
+   * @return mean of the map points set
    */
-  def average(): Option[MapPoint] = {
+  def mean(): Option[MapPoint] = {
 
     if (size == 0) return None
 
@@ -101,6 +101,41 @@ class MapPointSet extends TreeSet[MapPoint] {
         (acc._1 + x._1, acc._2 + x._2, acc._3 + x._3, acc._4 + x._4))
 
     Some(new MapPoint((avg._1 / size, avg._2 / size, avg._3 / size, avg._4 / size)))
+
+  }
+
+  /**
+   * Find the standard deviation on latitude and longitude directions for the locations
+   * expressed in meters
+   *
+   * @return standard deviation tuple for latitude and longitude
+   */
+  def stddev(): (Double, Double) = {
+
+    var stdlat = 0.0
+    var stdlon = 0.0
+
+    if (this.size > 1) {
+
+      val distsLat = this.map(pt => pt.greatCircleDistance(new MapPoint(pt.latitude, 0.0)))
+      val meanLat = distsLat.sum / distsLat.size.toDouble
+      val sumOfSquaresLat = distsLat.foldLeft(0.0)((total, lat) => {
+        val square = math.pow(lat - meanLat, 2.0)
+        total + square
+      })
+      stdlat = sqrt(sumOfSquaresLat / (distsLat.size.toDouble - 1.0))
+
+      val distsLon = this.map(pt => pt.greatCircleDistance(new MapPoint(0.0, pt.longitude)))
+      val meanLon = distsLon.sum / distsLon.size.toDouble
+      val sumOfSquaresLon = distsLon.foldLeft(0.0)((total, lon) => {
+        val square = math.pow(lon - meanLon, 2.0)
+        total + square
+      })
+      stdlon = sqrt(sumOfSquaresLon / (distsLon.size.toDouble - 1.0))
+
+    }
+
+    (stdlat, stdlon)
 
   }
 
