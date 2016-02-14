@@ -19,7 +19,7 @@ class EmpiricalVariogram(points: MapPointSet) {
    * @param tol tolerance for the lag increment.
    * The tolerance estrablishes distance bins for the lag increment, to accomodate enevently spaced observations.
    * Tolerance must be greater than 0.0 and less or equal thatn 1/2.
-   * @params nlags the number of lags which the variogram will be calculated.
+   * @param nlags the number of lags which the variogram will be calculated.
    * The number of lags is conjunction with the size of lag increment
    * will define the total distance over which a variogram is calculated.
    * @param cressie if true compute the variogram with Cressie-hawkins robust variogram estimator, if false throw Matheron's

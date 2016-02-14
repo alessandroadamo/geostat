@@ -26,12 +26,14 @@ object Main {
 
     val tr : MapPointSet = new MapPointSet(tree.radiusQuery(center, 0.0, 150.0))
 
-    for (t  <-  tr) println(t)
+    val stddev = KernelDensity.silvermanRule(tr)
+ 
+    val kde = new KernelDensity(stddev._1, stddev._2, tr)
+    println(tr)
 
-    println(tr.mean)
-    println(tr.stddev)
-    
-    println(KernelDensity.silvermanRule(tr))
+  //  println(tr.mean)
+  //  println(tr.stddev)
+  //  println(KernelDensity.silvermanRule(tr))
     
     
     //for (t  <-  tr) println(t)

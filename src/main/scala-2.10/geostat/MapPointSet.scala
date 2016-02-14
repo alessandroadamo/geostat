@@ -138,5 +138,7 @@ class MapPointSet extends TreeSet[MapPoint] {
     (stdlat, stdlon)
 
   }
+  
+  override def toString() = mkString("\n")
 
 }

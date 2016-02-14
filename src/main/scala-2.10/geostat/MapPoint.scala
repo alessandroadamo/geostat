@@ -254,6 +254,6 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
 
   def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key) // less than 0.5m
 
-  override def toString() = latitude + ", " + longitude
+  override def toString() = latitude + ";" + longitude + ";" + value
 
 }
