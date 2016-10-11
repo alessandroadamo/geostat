@@ -1,14 +1,17 @@
 package geostat
 
+import geostat.lattice.Lattice
+
+
 /**
- * Geodesic Grid
+ * Triangle Lattice
  * 
- * @param origin origin of the grid
+ * @param origin origin of the lattice
  * @param dist distance between points
  * @param nlat number of latitude segments
  * @param nlon number of longitude segments
  */
-class GeodesicGrid(origin: MapPoint, dist: Double = 0.0, nlat: Int = 1, nlon: Int = 1) extends Grid {
+class TriangleLattice(origin: MapPoint, dist: Double = 0.0, nlat: Int = 1, nlon: Int = 1) extends Lattice {
 
   require(dist >= 0.0)
   require(nlat > 0)

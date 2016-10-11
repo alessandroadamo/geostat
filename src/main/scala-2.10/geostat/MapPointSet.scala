@@ -138,7 +138,59 @@ class MapPointSet extends TreeSet[MapPoint] {
     (stdlat, stdlon)
 
   }
-  
-  override def toString() = mkString("\n")
+
+  /**
+   * Return a string representing the GeoJSON map point set representation
+   *
+   * @return the GeoJSON string
+   */
+  def toGeoJSON(): String = {
+
+    val builder = StringBuilder.newBuilder
+
+    builder.append("{ \"type\": \"FeatureCollection\",\n")
+    builder.append("  \"features\": [\n")
+
+    var it = this.iterator
+
+    while (it.hasNext) {
+      val pt = it.next
+      builder.append("    { \"type\": \"Feature\",\n")
+      builder.append("      \"geometry\": {\"type\": \"Point\", \"coordinates\": [")
+      builder.append(pt.longitude)
+      builder.append(", ")
+      builder.append(pt.latitude)
+      builder.append("]},\n")
+      builder.append("      \"properties\": {\"value\": ")
+      if (!pt.value.isNaN())
+        builder.append(pt.value)
+      else builder.append("null")
+      builder.append("}\n    }")
+
+      if (it.hasNext) {
+        builder.append(",\n")
+      } else {
+        builder.append("\n")
+      }
+
+    }
+
+    builder.append("  ]\n}\n")
+    builder.toString
+
+  }
+
+  override def toString() = {
+
+    val builder = StringBuilder.newBuilder
+
+    for (p <- this) {
+      builder.append(p.toString)
+      builder.append("\n")
+    }
+
+    builder.toString
+
+  }
 
 }

@@ -1,8 +1,5 @@
 package geostat
 
-//import org.apache.mahout.math._
-//import scalabindings._
-//import RLikeOps._
 import scala.math._
 
 object MapPoint extends WGS84 {
@@ -239,9 +236,9 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     asin(sin(greatCircleDistance(pt) * sin(bearing(pt) - bearing(ptdest))))
 
   /**
-   * Along Track Distances is the distance from the start point (this) to the closest 
+   * Along Track Distances is the distance from the start point (this) to the closest
    * point on the path to a third point pt, following a great circle path defined by this point and ptdest.
-   * 
+   *
    * @param ptdest destination point
    * @param pt third point
    * @return along track distance
@@ -254,6 +251,6 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
 
   def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key) // less than 0.5m
 
-  override def toString() = latitude + ";" + longitude + ";" + value
+  override def toString() = latitude + ";" + longitude //+ ";" + value
 
 }

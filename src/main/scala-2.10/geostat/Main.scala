@@ -6,16 +6,18 @@ import geostat.kriging.model._
 import java.io.File
 import java.io.BufferedWriter
 import java.io.FileWriter
-import geostat.kde.KernelDensity
+import geostat.lattice.LatLongLattice
+import geostat.lattice.FibonacciLattice
 
 object Main {
 
   def main(args: Array[String]): Unit = {
 
-    val center = new MapPoint(45.635477, 8.798650)
-    var points = Set[MapPoint]()
+    // var points = Set[MapPoint]()
 
-    for (i <- 1 to 2000) {
+    /*
+      for (i <- 1 to 2000) {
+     
       points += new MapPoint(45.635477 + (2.0 * Random.nextDouble() - 1.0) / 500.0,
         8.798650 + (2.0f * Random.nextDouble() - 1.0) / 500.0)
     }
@@ -26,9 +28,9 @@ object Main {
 
     val tr : MapPointSet = new MapPointSet(tree.radiusQuery(center, 0.0, 150.0))
 
-    val stddev = KernelDensity.silvermanRule(tr)
+    //val stddev = KernelDensity.silvermanRule(tr)
  
-    val kde = new KernelDensity(stddev._1, stddev._2, tr)
+    //val kde = new KernelDensity(stddev._1, stddev._2, tr)
     println(tr)
 
   //  println(tr.mean)
@@ -42,6 +44,7 @@ object Main {
 
     //   val v: Vector = (2.0f, 2.0f, 3.0f)
     //   val x = v(0)
+*/
 
     /*
     println(new MapPoint(45.635477, 8.798650))
@@ -65,12 +68,11 @@ object Main {
     val to = center.destination(1000, 25.0)
     
     // var grid = new GeodesicGrid(from, 10.0, 100, 100)
-    var grid = new CartesianGrid(from, 30.0, 10.0, 30, 5)
     
     for (v <- grid.vertex)  println(v)
     */
- 
-/*   val c = 4.0
+
+    /*   val c = 4.0
     val a = 0.4
     val cub = new CubicModel(c, a)
     val exp = new ExponentialModel(c, a)
@@ -104,7 +106,16 @@ object Main {
 
     }
     bw.close()
-*/    
+*/
+
+    var grid = new LatLongLattice(7.0, 7.0)
+    println(grid.vertex.toGeoJSON)
+
+    //  var grid = new FibonacciLattice(100)
+    //  println(grid.vertex.toGeoJSON)
+    //for (v <- grid.vertex) println(v)
+
+
   }
 
 }
