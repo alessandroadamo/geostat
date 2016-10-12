@@ -108,9 +108,16 @@ object Main {
     bw.close()
 */
 
-    var grid = new LatLongLattice(7.0, 7.0)
-    println(grid.vertex.toGeoJSON)
+  //  var grid = new LatLongLattice(7.0, 7.0)
+  //  println(grid.vertex.toGeoJSON)
 
+    
+    var pt1 = new MapPoint(45.497238, 9.131320)
+    var pt2 = new MapPoint(45.496659, 9.133788)
+    
+    var ln = new UndirectedLink(pt1, pt2)
+    println(ln.midpoint())
+    
     //  var grid = new FibonacciLattice(100)
     //  println(grid.vertex.toGeoJSON)
     //for (v <- grid.vertex) println(v)

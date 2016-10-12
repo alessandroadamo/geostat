@@ -105,7 +105,7 @@ class MapPointSet extends TreeSet[MapPoint] {
   }
 
   /**
-   * Find the standard deviation on latitude and longitude directions for the locations
+   * Find the standard deviations on latitude and longitude directions for the locations
    * expressed in meters
    *
    * @return standard deviation tuple for latitude and longitude

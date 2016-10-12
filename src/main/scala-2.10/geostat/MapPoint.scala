@@ -223,7 +223,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * (this.value + pt.value))
 
   }
-
+  
   /**
    * Cross Track Distance compute the distance from the point pt and the segment passing throw
    * this point and the ptdest point
