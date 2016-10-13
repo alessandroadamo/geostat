@@ -5,12 +5,12 @@ import geostat.MapPoint
 import geostat.MapPointSet
 
 /**
- * LatLong Lattice
+ * LatLon Lattice
  *
  * @param angLat angle between points on latitude axes
  * @param angtLon angle between points on longitude axes
  */
-class LatLongLattice(angLat: Double = 1.0, angLon: Double = 1.0) extends Lattice {
+class LatLonLattice(angLat: Double = 1.0, angLon: Double = 1.0) extends Lattice {
 
   require(angLat > 0.0)
   require(angLon > 0.0)

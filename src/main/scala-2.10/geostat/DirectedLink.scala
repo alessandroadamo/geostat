@@ -22,4 +22,7 @@ class DirectedLink(nodeA: MapPoint, nodeB: MapPoint) extends Link(nodeA, nodeB) 
 
   }
 
+  override def equals(that: DirectedLink): Boolean =
+    (this.nodeA.equals(that.nodeA) && (this.nodeB.equals(that.nodeB)))
+
 }

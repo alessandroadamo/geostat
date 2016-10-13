@@ -16,8 +16,6 @@ abstract class Link(val nodeA: MapPoint, val nodeB: MapPoint) extends Serializab
 
   val lenght = nodeA.greatCircleDistance(nodeB) // length of the link
 
-  def equals(that: UndirectedLink) = this.hashCode() == that.hashCode()
-
   /**
    * Calculate the half-way point along a great circle path between the nodeA and nodeB points
    *
@@ -47,13 +45,11 @@ abstract class Link(val nodeA: MapPoint, val nodeB: MapPoint) extends Serializab
   
     val builder = StringBuilder.newBuilder
 
-    builder.append("{\n")
-    builder.append("  \"nodes\": [")
+    builder.append("{\"nodes\":[")
     builder.append(nodeA.key)
-    builder.append(", ")
+    builder.append(",")
     builder.append(nodeB.key)
-    builder.append("]\n")
-    builder.append("}")
+    builder.append("]}\n")
 
     builder.toString()
   

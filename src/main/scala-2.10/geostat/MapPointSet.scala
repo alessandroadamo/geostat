@@ -148,24 +148,11 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     val builder = StringBuilder.newBuilder
 
-    builder.append("{\"type\":\"FeatureCollection\",\"features\":[\n")
-
     var it = this.iterator
 
-    while (it.hasNext) {
+    while (it.hasNext)
+      builder.append(it.next())
 
-      val pt = it.next
-      builder.append(pt)
-
-      if (it.hasNext) {
-        builder.append(",\n")
-      } else {
-        builder.append("\n")
-      }
-
-    }
-
-    builder.append("]}\n")
     builder.toString
 
   }

@@ -29,5 +29,9 @@ class UndirectedLink(nodeA: MapPoint, nodeB: MapPoint) extends Link(nodeA, nodeB
     result.toInt
 
   }
+  
+  override def equals(that: UndirectedLink): Boolean = 
+    ((this.nodeA.equals(that.nodeA) && (this.nodeB.equals(that.nodeB))) ||
+        (this.nodeA.equals(that.nodeB) && (this.nodeB.equals(that.nodeA))))
 
 }
