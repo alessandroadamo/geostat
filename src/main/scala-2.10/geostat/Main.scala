@@ -8,6 +8,7 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import geostat.lattice.LatLongLattice
 import geostat.lattice.FibonacciLattice
+import geostat.lattice.RandomLattice
 
 object Main {
 
@@ -108,20 +109,18 @@ object Main {
     bw.close()
 */
 
-  //  var grid = new LatLongLattice(7.0, 7.0)
-  //  println(grid.vertex.toGeoJSON)
-
-    
-    var pt1 = new MapPoint(45.497238, 9.131320)
-    var pt2 = new MapPoint(45.496659, 9.133788)
-    
-    var ln = new UndirectedLink(pt1, pt2)
-    println(ln.midpoint())
-    
-    //  var grid = new FibonacciLattice(100)
+    //  var grid = new LatLongLattice(7.0, 7.0)
     //  println(grid.vertex.toGeoJSON)
-    //for (v <- grid.vertex) println(v)
 
+    /*var pt1 = new MapPoint(90.0-1e-4, 0.0)
+    */
+    var pt2 = new MapPoint(90.0-1e-4, 1e-6)
+
+    println(pt2)
+    // print(pt1.equals(pt2+new MapPoint(0.01,0.0)))
+
+    var grid = new RandomLattice(100)
+    println(grid.vertex.toGeoJSON)
 
   }
 

@@ -9,6 +9,8 @@ object MapPoint extends WGS84 {
   val MIN_LONGITUDE = -180
   val MAX_LONGITUDE = +180
 
+  private val MIN_DISTANCE = 1e-1
+
   /**
    * Convert latitude/longitude coordinate to 3D Cartesian coordinate
    *
@@ -223,7 +225,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * (this.value + pt.value))
 
   }
-  
+
   /**
    * Cross Track Distance compute the distance from the point pt and the segment passing throw
    * this point and the ptdest point
@@ -238,7 +240,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
   /**
    * Along Track Distances is the distance from the start point (this) to the closest
    * point on the path to a third point pt, following a great circle path defined by this point and ptdest.
-   *
+   * MIN_DISTANCE
    * @param ptdest destination point
    * @param pt third point
    * @return along track distance
@@ -249,8 +251,27 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     acos(cos(distAD) / cos(xtd))
   }
 
-  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < 0.5) 0 else this.key.compare(that.key) // less than 0.5m
+  //  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < MIN_DISTANCE) 0 else this.key.compare(that.key) // less than 0.5m
+  def compare(that: MapPoint) = this.key.compare(that.key)
 
-  override def toString() = latitude + ";" + longitude //+ ";" + value
+  override def toString() = {
+
+    val builder = StringBuilder.newBuilder
+
+    builder.append("{\"type\":\"Feature\",\"id\":")
+    builder.append(key)
+    builder.append(",\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
+    builder.append(longitude)
+    builder.append(",")
+    builder.append(latitude)
+    builder.append("]},\"properties\":{\"value\":")
+    if (!value.isNaN())
+      builder.append(value)
+    else builder.append("null")
+    builder.append("}}")
+
+    builder.toString()
+
+  }
 
 }

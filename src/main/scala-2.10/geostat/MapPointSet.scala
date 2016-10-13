@@ -148,24 +148,14 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     val builder = StringBuilder.newBuilder
 
-    builder.append("{ \"type\": \"FeatureCollection\",\n")
-    builder.append("  \"features\": [\n")
+    builder.append("{\"type\":\"FeatureCollection\",\"features\":[\n")
 
     var it = this.iterator
 
     while (it.hasNext) {
+
       val pt = it.next
-      builder.append("    { \"type\": \"Feature\",\n")
-      builder.append("      \"geometry\": {\"type\": \"Point\", \"coordinates\": [")
-      builder.append(pt.longitude)
-      builder.append(", ")
-      builder.append(pt.latitude)
-      builder.append("]},\n")
-      builder.append("      \"properties\": {\"value\": ")
-      if (!pt.value.isNaN())
-        builder.append(pt.value)
-      else builder.append("null")
-      builder.append("}\n    }")
+      builder.append(pt)
 
       if (it.hasNext) {
         builder.append(",\n")
@@ -175,7 +165,7 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     }
 
-    builder.append("  ]\n}\n")
+    builder.append("]}\n")
     builder.toString
 
   }
