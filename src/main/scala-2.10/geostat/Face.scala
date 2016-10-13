@@ -28,13 +28,15 @@ abstract class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoin
 
   }
 
-  override def equals(that: Face): Boolean = {
+  override def equals(that: Any): Boolean = {
+
+    val tt: Face = that.asInstanceOf[Face]
 
     val arrA: Array[MapPoint] = Array(nodeA, nodeB, nodeC).sorted
-    val arrB: Array[MapPoint] = Array(that.nodeA, that.nodeB, that.nodeC).sorted
+    val arrB: Array[MapPoint] = Array(tt.nodeA, tt.nodeB, tt.nodeC).sorted
 
     (arrA(0).equals(arrB(0)) && (arrA(1).equals(arrB(1))) && arrA(2).equals(arrB(2)))
-  
+
   }
 
   override def toString() = {

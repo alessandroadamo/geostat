@@ -6,7 +6,7 @@ import geostat.kriging.model._
 import java.io.File
 import java.io.BufferedWriter
 import java.io.FileWriter
-import geostat.lattice.LatLongLattice
+import geostat.lattice.LatLonLattice
 import geostat.lattice.FibonacciLattice
 import geostat.lattice.RandomLattice
 
