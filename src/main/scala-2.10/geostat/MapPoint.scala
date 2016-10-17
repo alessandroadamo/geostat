@@ -251,9 +251,8 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     acos(cos(distAD) / cos(xtd))
   }
 
-  //  def compare(that: MapPoint) = if (this.greatCircleDistance(that) < MIN_DISTANCE) 0 else this.key.compare(that.key) // less than 0.5m
   def compare(that: MapPoint) = this.key.compare(that.key)
-  
+
   override def toString() = {
 
     val builder = StringBuilder.newBuilder
@@ -264,11 +263,13 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     builder.append(longitude)
     builder.append(",")
     builder.append(latitude)
-    builder.append("]},\"properties\":{\"value\":")
-    if (!value.isNaN())
+    builder.append("]},\"properties\":")
+    if (!value.isNaN()) {
+      builder.append("{\"value\":")
       builder.append(value)
-    else builder.append("null")
-    builder.append("}}\n")
+      builder.append("}")
+    } else builder.append("null")
+    builder.append("}\n")
 
     builder.toString()
 

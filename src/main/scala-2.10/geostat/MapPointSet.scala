@@ -144,7 +144,7 @@ class MapPointSet extends TreeSet[MapPoint] {
    *
    * @return the GeoJSON string
    */
-  def toGeoJSON(): String = {
+  override def toString(): String = {
 
     val builder = StringBuilder.newBuilder
 
@@ -152,19 +152,6 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     while (it.hasNext)
       builder.append(it.next())
-
-    builder.toString
-
-  }
-
-  override def toString() = {
-
-    val builder = StringBuilder.newBuilder
-
-    for (p <- this) {
-      builder.append(p.toString)
-      builder.append("\n")
-    }
 
     builder.toString
 

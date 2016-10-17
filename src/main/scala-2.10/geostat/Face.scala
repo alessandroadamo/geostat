@@ -10,7 +10,7 @@ import scala.math._
  * @param nodeB second node
  */
 @SerialVersionUID(123L)
-abstract class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoint) extends Serializable {
+class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoint) extends Serializable with Ordered[Face] {
 
   require(nodeA != null)
   require(nodeB != null)
@@ -39,17 +39,49 @@ abstract class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoin
 
   }
 
+  def compare(that: Face) = {
+
+    val arrA: Array[MapPoint] = Array(nodeA, nodeB, nodeC).sorted
+    val arrB: Array[MapPoint] = Array(that.nodeA, that.nodeB, that.nodeC).sorted
+
+    var res = arrA(0).key.compare(arrB(0).key)
+    if (res == 0) {
+      res = arrA(1).key.compare(arrB(1).key)
+      if (res == 0) {
+        res = arrA(2).key.compare(arrB(2).key)
+        res
+      } else res
+    }
+
+    res
+
+  }
+
   override def toString() = {
 
     val builder = StringBuilder.newBuilder
 
-    builder.append("{\"nodes\":[")
-    builder.append(nodeA.key)
+    builder.append("{\"type\":\"Feature\"")
+    builder.append(",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[")
+    builder.append(nodeA.longitude)
     builder.append(",")
-    builder.append(nodeB.key)
+    builder.append(nodeA.latitude)
+    builder.append("],[")
+    builder.append(nodeB.longitude)
     builder.append(",")
-    builder.append(nodeC.key)
-    builder.append("]}\n")
+    builder.append(nodeB.latitude)
+    builder.append("],[")
+    builder.append(nodeC.longitude)
+    builder.append(",")
+    builder.append(nodeC.latitude)
+    builder.append("],[")
+    builder.append(nodeA.longitude)
+    builder.append(",")
+    builder.append(nodeA.latitude)
+    builder.append("]]]},\"properties\":")
+    builder.append("null")
+
+    builder.append("}\n")
 
     builder.toString()
 

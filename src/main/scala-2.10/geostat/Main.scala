@@ -112,16 +112,20 @@ object Main {
     //  var grid = new LatLongLattice(7.0, 7.0)
     //  println(grid.vertex.toGeoJSON)
 
-    /*var pt1 = new MapPoint(90.0-1e-4, 0.0)
+   /*var pt1 = new MapPoint(90.0-1e-4, 0.0)
     */
-    var pt2 = new MapPoint(90.0-1e-4, 1e-6)
+    //var pt2 = new MapPoint(90.0-1e-4, 1e-6)
 
-    println(pt2)
+    //println(pt2)
     // print(pt1.equals(pt2+new MapPoint(0.01,0.0)))
 
     var grid = new RandomLattice(100)
-    println(grid.vertex.toGeoJSON)
+   println(grid.vertex)
 
+    val f = new Face(new MapPoint(45.489421, 9.120813),
+        new MapPoint(45.491732, 9.134172),
+        new MapPoint(45.474157, 9.154149))
+    println(f)
   }
 
 }

@@ -42,7 +42,7 @@ abstract class Link(val nodeA: MapPoint, val nodeB: MapPoint) extends Serializab
   }
 
   override def toString() = {
-  
+
     val builder = StringBuilder.newBuilder
 
     builder.append("{\"nodes\":[")
@@ -52,7 +52,7 @@ abstract class Link(val nodeA: MapPoint, val nodeB: MapPoint) extends Serializab
     builder.append("]}\n")
 
     builder.toString()
-  
+
   }
 
 }
