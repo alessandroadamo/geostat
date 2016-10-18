@@ -18,10 +18,10 @@ object MapPoint extends WGS84 {
    * @param longitude longitude
    * @return the 3D Cartesian coordinate
    */
-  def geodetic2cart(pt: MapPoint): (Double, Double, Double, Double) = {
+  def geodesic2cart(pt: MapPoint): (Double, Double, Double, Double) = {
 
-    val lat = pt.latitude
-    val lon = pt.longitude
+    val lat = pt.latitude.toRadians
+    val lon = pt.longitude.toRadians
 
     val slat = sin(lat)
     val clat = cos(lat)
@@ -39,7 +39,7 @@ object MapPoint extends WGS84 {
    * @param longitude longitude
    * @return the 3D Cartesian coordinate
    */
-  def cart2geodetic(cart: (Double, Double, Double, Double)) = new MapPoint(asin(cart._3 / R).toDegrees.toFloat, atan2(cart._2, cart._1).toDegrees, cart._4)
+  def cart2geodesic(cart: (Double, Double, Double, Double)) = new MapPoint(asin(cart._3 / R).toDegrees.toFloat, atan2(cart._2, cart._1).toDegrees, cart._4)
 
   private def latitude2int(latitude: Double) = floor((latitude - MapPoint.MIN_LATITUDE) * 1e6f).toInt
 
@@ -207,7 +207,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
    * @return midpoint
    */
   def midpoint(pt: MapPoint): MapPoint = {
-
+    /*
     val lat1 = latitude.toRadians
     val lon1 = longitude.toRadians
     val lat2 = pt.latitude.toRadians
@@ -223,7 +223,18 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
     lon3 = ((lon3 + 3.0f * Pi) % (2.0f * Pi) - Pi) // normalise to -180..+180°
 
     new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * (this.value + pt.value))
+*/
 
+    val pt1 = MapPoint.geodesic2cart(this)
+    val pt2 = MapPoint.geodesic2cart(pt)
+
+    var m = (0.5 * (pt1._1 + pt2._1),
+      0.5 * (pt1._2 + pt2._2),
+      0.5 * (pt1._3 + pt2._3),
+      0.5 * (pt1._4 + pt2._4))
+  
+    MapPoint.cart2geodesic(m)
+  
   }
 
   /**
@@ -269,9 +280,61 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
       builder.append(value)
       builder.append("}")
     } else builder.append("null")
-    builder.append("}\n")
+    builder.append("}")
 
     builder.toString()
+
+  }
+
+  /**
+   * Returns the angle expressed in radiant between this MapPoint and the MapPoint passed as argument.
+   * This is the same as the distance on the unit sphere.
+   *
+   * @param that the map point
+   * @return the angle between this point and that point
+   */
+  def angleBetween(that: MapPoint): Double = {
+
+    val pt1 = MapPoint.geodesic2cart(this)
+    val pt2 = MapPoint.geodesic2cart(that)
+
+    (pt1._1 * pt2._1 + pt1._2 * pt2._2 + pt1._3 * pt2._3) / (MapPoint.R * MapPoint.R)
+
+  }
+
+  /**
+   * Returns the LatLng which lies the given fraction of the way between the
+   * origin LatLng and the destination LatLng.
+   * @param from     The LatLng from which to start.
+   * @param to       The LatLng toward which to travel.
+   * @param fraction A fraction of the distance to travel.
+   * @return The interpolated LatLng.
+   */
+  def interpolate(that: MapPoint, fraction: Double): MapPoint = {
+
+    val fromLat = latitude.toRadians
+    val fromLng = longitude.toRadians
+    val toLat = that.latitude.toRadians
+    val toLng = that.longitude.toRadians
+    val cosFromLat = cos(fromLat);
+    val cosToLat = cos(toLat);
+
+    // Computes Spherical interpolation coefficients.
+    val angle = angleBetween(that)
+
+    val sinAngle = sin(angle)
+
+    val a = sin((1 - fraction) * angle) / sinAngle;
+    val b = sin(fraction * angle) / sinAngle;
+
+    // Converts from polar to vector and interpolate.
+    val x = a * cosFromLat * cos(fromLng) + b * cosToLat * cos(toLng)
+    val y = a * cosFromLat * sin(fromLng) + b * cosToLat * sin(toLng)
+    val z = a * sin(fromLat) + b * sin(toLat)
+
+    val int = (1 - fraction) * value + fraction * that.value
+
+    new MapPoint(atan2(z, sqrt(x * x + y * y)).toDegrees, atan2(y, x).toDegrees, int);
 
   }
 

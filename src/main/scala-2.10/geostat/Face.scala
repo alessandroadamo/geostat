@@ -56,7 +56,29 @@ class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoint) extend
     res
 
   }
-
+  
+/**
+ * Split the triangle into four triangles built over the midpoints of the sides.
+ * 
+ * @return the sub triangles
+ * */
+  def split() : MeshSet = {
+    
+    var set = new MeshSet()
+    
+    var a = nodeA.midpoint(nodeB)
+    var b = nodeA.midpoint(nodeC)
+    var c = nodeB.midpoint(nodeC)
+    
+    set.add(new Face(nodeA, a, b))
+    set.add(new Face(a, nodeB, c))
+    set.add(new Face(b, c, nodeC))
+    set.add(new Face(a, b, c))
+  
+    set
+    
+  }
+  
   override def toString() = {
 
     val builder = StringBuilder.newBuilder
@@ -81,7 +103,7 @@ class Face(val nodeA: MapPoint, val nodeB: MapPoint, val nodeC: MapPoint) extend
     builder.append("]]]},\"properties\":")
     builder.append("null")
 
-    builder.append("}\n")
+    builder.append("}")
 
     builder.toString()
 

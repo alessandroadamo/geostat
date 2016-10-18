@@ -27,8 +27,15 @@ class MeshSet extends TreeSet[Face] {
 
     var it = this.iterator
 
-    while (it.hasNext)
+    builder.append("{\"type\":\"FeatureCollection\",\"features\":[\n")
+
+    while (it.hasNext) {
       builder.append(it.next())
+      if (it.hasNext)
+        builder.append(",")
+      builder.append("\n")
+    }
+    builder.append("]}")
 
     builder.toString
 

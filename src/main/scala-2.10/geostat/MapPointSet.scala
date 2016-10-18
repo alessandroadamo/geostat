@@ -88,23 +88,6 @@ class MapPointSet extends TreeSet[MapPoint] {
   }
 
   /**
-   * Finds the mean latitude and longitude for the locations
-   *
-   * @return mean of the map points set
-   */
-  def mean(): Option[MapPoint] = {
-
-    if (size == 0) return None
-
-    val avg = map(x => x.geodetic2cart).
-      foldLeft((0.0, 0.0, 0.0, 0.0))((acc, x) =>
-        (acc._1 + x._1, acc._2 + x._2, acc._3 + x._3, acc._4 + x._4))
-
-    Some(new MapPoint((avg._1 / size, avg._2 / size, avg._3 / size, avg._4 / size)))
-
-  }
-
-  /**
    * Find the standard deviations on latitude and longitude directions for the locations
    * expressed in meters
    *
@@ -150,8 +133,15 @@ class MapPointSet extends TreeSet[MapPoint] {
 
     var it = this.iterator
 
-    while (it.hasNext)
+    builder.append("{\"type\":\"FeatureCollection\",\"features\":[\n")
+
+    while (it.hasNext) {
       builder.append(it.next())
+      if (it.hasNext)
+        builder.append(",")
+      builder.append("\n")
+    }
+    builder.append("]}")
 
     builder.toString
 
