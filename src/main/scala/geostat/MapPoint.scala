@@ -207,24 +207,7 @@ class MapPoint(val latitude: Double = 0.0, val longitude: Double = 0.0, var valu
    * @return midpoint
    */
   def midpoint(pt: MapPoint): MapPoint = {
-    /*
-    val lat1 = latitude.toRadians
-    val lon1 = longitude.toRadians
-    val lat2 = pt.latitude.toRadians
-    val lon2 = pt.longitude.toRadians
-
-    val dlon = lon2 - lon1
-
-    val Bx = cos(lat2) * cos(dlon)
-    val By = cos(lat2) * sin(dlon)
-
-    val lat3 = atan2(sin(lat1) + sin(lat2), sqrt((cos(lat1) + Bx) * (cos(lat1) + Bx) + By * By)).toFloat
-    var lon3 = lon1 + atan2(By, cos(lat1) + Bx)
-    lon3 = ((lon3 + 3.0f * Pi) % (2.0f * Pi) - Pi) // normalise to -180..+180°
-
-    new MapPoint(lat3.toDegrees, lon3.toDegrees, 0.5 * (this.value + pt.value))
-*/
-
+   
     val pt1 = MapPoint.geodesic2cart(this)
     val pt2 = MapPoint.geodesic2cart(pt)
 
